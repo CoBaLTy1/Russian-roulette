@@ -6,10 +6,28 @@ let gamestate = 1;
 let display = document.querySelector('.center_display');
 let cylinder = 0;
 const playagain = document.querySelector('.play_again')
-const yourself1 = document.querySelector('.button4')
-const shoot_opponent1 = document.querySelector('.button5')
 
+function turnswitcher() {
+    if (player1 === true) {
+        player1 = false
+        player2 = true
+        console.log("Player 2's turn")
+        yourself.style.gridColumn = '15/18'
+        yourself.style.gridRow = '12/14'
+        shoot_opponent.style.gridColumn = '3/6'
+        shoot_opponent.style.gridRow = '12/14'
 
+    }
+    else if (player2 === true) {
+        player2 = false
+        player1 = true
+        console.log("player 1's turn")
+        yourself.style.gridColumn = '3/6'
+        yourself.style.gridRow = '12/14'
+        shoot_opponent.style.gridColumn = '15/18'
+        shoot_opponent.style.gridRow = '12/14'
+    }
+}
 
 function spin_the_cylinder() {
     cylinder_bullet = Math.floor(Math.random() * 6) + 1;
@@ -17,6 +35,15 @@ function spin_the_cylinder() {
     const spin_it_text = "Player 1 decided to spin the cylinder"
     changeText(spin_it_text)
 }
+
+function hidebuttons() {
+    spin_cylinder.style.display = 'none';
+    shoot_opponent.style.display = 'none';
+    yourself.style.display = 'none';
+    shoot_opponent1.style.display = 'none';
+    yourself1.style.display = 'none';
+}
+
 
 function shoot_op_failed() {
     const shoot_opponent_failed_text = "Player 1 decided to shoot opponent, the gun did not go off";
@@ -38,29 +65,20 @@ function shoot_op_win() {
     changeText(shoot_op_winner, "20px");
 }
 
-function hidebuttons() {
-    spin_cylinder.style.display = 'none';
-    shoot_opponent.style.display = 'none';
-    yourself.style.display = 'none';
-}
-
 function showbuttons() {
     spin_cylinder.style.display = 'block';
     shoot_opponent.style.display = 'block';
     yourself.style.display = 'block';
 }
 
-function hide2buttons() {
-    yourself.style.display = 'none'
-    shoot_opponent.style.display = 'none'
+function showbuttons1() {
+    spin_cylinder.style.display = 'block';
+    shoot_opponent1.style.display = 'block';
+    yourself1.style.display = 'block';
 }
 
 function showbutton1() {
     yourself.style.display = 'block'
-}
-
-function showbutton11() {
-    yourself1.style.display = 'none'
 }
 
 // Update the existing changeText function to use the new typing effect and font size
@@ -88,10 +106,11 @@ function changeTextWithTypingEffect(newText,) {
             index++;
         } else {
             clearInterval(typingInterval); // Stop the typing effect
-            if (endhide == 1) {
+            if (endhide === 1) {
                 playagain.style.display = 'block'; // Hide play again button
                 hidebuttons()
-            } else {
+            }
+            else {
                 showbuttons()
             }
         }
@@ -110,6 +129,7 @@ function changeTextWithTypingEffect1(newText,) {
         } else {
             clearInterval(typingInterval); // Stop the typing effect
             if (endhide == 1) {
+                playagain.style.display = 'block'
                 hidebuttons()
 
             }
@@ -125,11 +145,27 @@ function changeTextWithTypingEffect1(newText,) {
 
 }
 
+function changeTextWithTypingEffect2(newText,) {
+    hidebuttons(); // Hide buttons at the start
+    display.textContent = ''; // Clear existing text
+    let index = 0;
 
-
-
-
-
+    const typingInterval = setInterval(() => {
+        if (index < newText.length) {
+            display.textContent += newText.charAt(index);
+            index++;
+        } else {
+            clearInterval(typingInterval); // Stop the typing effect
+            if (endhide === 1) {
+                playagain.style.display = 'block'; // Hide play again button
+                hidebuttons()
+            }
+            else {
+                showbuttons()
+            }
+        }
+    }, 25); // Adjust typing speed here (100ms per character)
+}
 
 // Initialize display and cylinder bullet
 
@@ -137,18 +173,23 @@ let cylinder_bullet = Math.floor(Math.random() * 6) + 1;
 console.log(cylinder_bullet)
 triggertyping_begin();
 
-let player1 = true;
-let player2 = false;
 
 function handlePlayerTurn() {
-    if (player1) {
+    if (player1 === true) {
         console.log("Player 1's turn");
+
         // Call player 1's shoot function or handle their actions here
-    } else if (player2) {
+    } else if (player2 === true) {
         console.log("Player 2's turn");
+        
         // Call player 2's shoot function or handle their actions here
     }
 }
+
+let player1 = true;
+handlePlayerTurn()
+let player2 = false;
+
 
 function resetgame() { // Move resetgame to global scope
     gamestate = 1;
@@ -162,14 +203,12 @@ function resetgame() { // Move resetgame to global scope
     triggertyping_begin();
 }
 
+let secondshot = 0
+
 
 
 
 if (player1 === true) {
-
-
-
-
 
 function shoot() {
     if (gamestate == 1) { // Only allow shooting if the game is active
@@ -178,20 +217,17 @@ function shoot() {
             cylinder = 1; // Reset cylinder if it exceeds 6
         }
 
-        spin_cylinder.style.display = 'block';
-        shoot_opponent.style.display = 'block';
-
         if (cylinder == cylinder_bullet) {
             gunwentoff();
             gamestate = 0;
-            endhide = 1
-            if (gamestate == 0) {
-
-            
-            }
+            endhide = 1;
         } else {
+            if (secondshot == 1) { // Check if secondshot is 1 before switching players
+                turnswitcher()
+            }
             const newText = 'The gun did not go off';
             changeText(newText, "45px"); // Use the new changeText function
+            secondshot = 0; // Reset secondshot after handling
         }
 
         console.log(cylinder);
@@ -199,17 +235,10 @@ function shoot() {
 
     // Reset player states
 
-    player1 = false
-    player2 = true
-    handlePlayerTurn(); // This will log "Player 2's turn" if player2 is true
+
 }
 }
 // Call the function to handle the next player's turn
-handlePlayerTurn();
-
-
-
-
 
 function shoot_op() {
     if (gamestate == 1) {
@@ -220,40 +249,24 @@ function shoot_op() {
         }
     }
 
-
-
     if (cylinder == cylinder_bullet) {
         gamestate = 0;
-        endhide = 1
-        shoot_op_win()
-
-        playagain.style.display = 'block'
-        
+        endhide = 1;
+        shoot_op_win();
+        hidebuttons(); // Hide buttons after winning
     } else {
         shoot_op_failed();
+        secondshot = 1; // Set secondshot to 1 to indicate Player 1's turn is over
     }
 
     console.log(cylinder);
-
 }
-
-
-
-
-
-
-
 // Check player states
 if (player2 === true) {
 
 
 
-    function spin_the_cylinder1() {
-        cylinder_bullet = Math.floor(Math.random() * 6) + 1;
-        console.log(cylinder_bullet)
-        const spin_it_text = "Player 2 decided to spin the cylinder"
-        changeText(spin_it_text)
-    }
+
     
     function shoot_op_failed1() {
         const shoot_opponent_failed_text = "Player 2 decided to shoot opponent, the gun did not go off";
@@ -295,12 +308,8 @@ if (player2 === true) {
     
         // Reset player states
     
-        player2 = false
-        player1 = true
-        handlePlayerTurn()
+
     }
-    
-    
     
     function shoot_op() {
         if (gamestate == 1) {
@@ -315,7 +324,7 @@ if (player2 === true) {
     
         if (cylinder == cylinder_bullet) {
             gamestate = 0;
-            endhide = 1
+            endhide = 1;
             shoot_op_win()
             hidebuttons(); // Hide buttons after winning
     
@@ -331,7 +340,3 @@ if (player2 === true) {
 
 
 }
-
-
-
-
