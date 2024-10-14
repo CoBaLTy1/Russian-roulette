@@ -1,3 +1,4 @@
+
 const gun = document.querySelector('.gun');
 const spin_cylinder = document.querySelector('.button2');
 const shoot_opponent = document.querySelector('.button3');
@@ -7,6 +8,30 @@ let display = document.querySelector('.center_display');
 let cylinder = 0;
 const playagain = document.querySelector('.play_again')
 
+
+gun.style.transform = 'rotate(270deg)';
+
+
+function nextturn() {
+    if (player1 === true) {
+        const nextturn_text = "The gun did not go off player 2's turn"
+        changeText(nextturn_text, "30px");
+    }
+    else if (player2 === true) {
+        const nextturn_text = "The gun did not go off player 1's turn"
+        changeText(nextturn_text, "30px");
+    }
+}
+function shootfail() {
+    if (player1 === true) {
+        const shoot_fail_text = "the gun did not go off"
+        changeText(shoot_fail_text, "30px");
+    }
+    else if (player2 === true) {
+        const shoot_fail_text = "the gun did not go off" 
+        changeText(shoot_fail_text, "30px");
+    }
+}
 
 let spinque = false 
 function turnswitcher() {
@@ -19,7 +44,8 @@ function turnswitcher() {
         shoot_opponent.style.gridColumn = '3/6'
         shoot_opponent.style.gridRow = '12/14'
         spinque = true
-        console.log('spin')
+        gun.style.gridColumn = '11/14'
+ 
 
     }
     else if (player2 === true) {
@@ -31,7 +57,9 @@ function turnswitcher() {
         shoot_opponent.style.gridColumn = '15/18'
         shoot_opponent.style.gridRow = '12/14'
         spinque = true
-        console.log('spin')
+        gun.style.gridColumn = '8/11'
+
+
     }
 }
 
@@ -41,8 +69,14 @@ function spin_the_cylinder() {
     spincylinderdone = true
     cylinder_bullet = Math.floor(Math.random() * 6) + 1;
     console.log(cylinder_bullet)
+    if (player1 === true) {
     const spin_it_text = "Player 1 decided to spin the cylinder"
     changeText(spin_it_text)
+    }
+    else if (player2 === true) {
+    const spin_it_text = "Player 2 decided to spin the cylinder"
+    changeText(spin_it_text)
+    }
  
 }
 
@@ -146,28 +180,27 @@ function changeTextWithTypingEffect(newText,) {
             index++;
         } else {
             clearInterval(typingInterval); // Stop the typing effect
-            if (endhide === 1) {
-                playagain.style.display = 'block'; // Hide play again button
-                hidebuttons()
-            }
 
-            else if (spincylinderdone === true) {
-                showbuttonsspin()
-                if (spinque === true) {
-                    showbuttons()
-                    spinque = false
+                // ...
+                if (endhide === 1) {
+                    playagain.style.display = 'block';
+                    hidebuttons(); // Hide all buttons, including "Yourself" and "Shoot Opponent"
+                } else if (spincylinderdone === true) {
+                    showbuttonsspin();
+                    if (spinque === true) {
+                        showbuttons();
+                        spinque = false;
+                    }
+                } else if (spinque === true) {
+                    showbuttons();
+                    spinque = false;
+                } else {
+                    showbuttons();
                 }
+                // ...
 
-            }
-            else if (spinque === true) {
-                showbuttons()
-                spinque = false
-            }
-            else {
-                showbuttons()
-                
-            }
         }
+
     }, 25); // Adjust typing speed here (100ms per character)
 }
 
@@ -191,6 +224,7 @@ function changeTextWithTypingEffect1(newText) {
 
             }
 
+
                 if (endhide == 0) {
                 
                 showbutton1()
@@ -203,6 +237,33 @@ function changeTextWithTypingEffect1(newText) {
 
 }
 
+function changeTextWithTypingEffect1(newText1) {
+    hidebuttons()
+    display.textContent = ''; // Clear existing text
+    let index = 0;
+
+    const typingInterval = setInterval(() => {
+        if (index < newText1.length) {
+            display.textContent += newText1.charAt(index);
+            index++;
+        } else {
+            clearInterval(typingInterval); // Stop the typing effect
+            if (endhide == 1) {
+                playagain.style.display = 'block'
+                hidebuttons()
+
+            }
+
+
+                if (endhide == 0) {
+                
+                showbutton1()
+
+            }
+
+        }
+    }, 25); // Adjust typing speed here (100ms per character)
+}
 
 
 
@@ -231,21 +292,39 @@ let player2 = false;
 
 
 function resetgame() { // Move resetgame to global scope
+    player1 = true;
+    player2 = false;
+    spincylinderdone = false;
     gamestate = 1;
     console.log("Game has been reset");
-    endhide = 0
+    endhide = 0;
     // Optionally, you can also reset other variables if needed
     cylinder = 0; // Reset cylinder
     cylinder_bullet = Math.floor(Math.random() * 6) + 1;
-    console.log(cylinder_bullet)
+    console.log(cylinder_bullet);
     playagain.style.display = 'none'; // Hide play again button
-    spinque = true
+    spinque = true;
+    spin_cylinder.style.display = 'block';
     triggertyping_begin();
+    yourself.style.gridColumn = '3/6';
+    yourself.style.gridRow = '12/14';
+    shoot_opponent.style.gridColumn = '15/18';
+    shoot_opponent.style.gridRow = '12/14';
+    gun.style.gridColumn = '8/11';
+
+    gun.style.transform = 'rotate(270deg)';
+
+    gun.classList.remove('zoomInTop')
+    void gun.offsetWidth;
+
+    gun.classList.add('zoomInTop')
+
 }
+
 
 let secondshot = 0
 
-let newText = ""
+
 
 
 if (player1 === true) {
@@ -253,25 +332,32 @@ if (player1 === true) {
 function shoot() {
     if (gamestate == 1) { // Only allow shooting if the game is active
         cylinder += 1;
+        gun.style.transform = 'scaleX(-1)';
         if (cylinder > 6) {
             cylinder = 1; // Reset cylinder if it exceeds 6
         }
+
 
         if (cylinder == cylinder_bullet) {
             gunwentoff();
             gamestate = 0;
             endhide = 1;
-        } else {
-            if (secondshot == 1) { // Check if secondshot is 1 before switching players
+        } else if (secondshot == 1) { // Check if secondshot is 1 before switching players
+                nextturn()
                 turnswitcher()
-            }
-         
 
-            if (secondshot == 1) {
-                newText = "The gun did not go off. Player 2's turn";
+               
+
+
+
+                secondshot = 0;
+        }
+
+            
+            else {
+                shootfail();
+
             }
-            changeText(newText, "32px"); // Use the new changeText function
-            secondshot = 0; // Reset secondshot after handling
 
         }
 
@@ -282,12 +368,11 @@ function shoot() {
 
 
 }
-}
+
 // Call the function to handle the next player's turn
 
 function shoot_op() {
     if (gamestate == 1) {
-        gun.style.transform = 'scaleX(-1)';
         cylinder += 1;
         if (cylinder > 6) {
             cylinder = 1; // Reset cylinder if it exceeds 6
@@ -300,15 +385,18 @@ function shoot_op() {
         shoot_op_win();
 
     } else {
+        gun.style.transform = 'scaleX(1)'
         shoot_op_failed();
         secondshot = 1; // Set secondshot to 1 to indicate Player 1's turn is over
     }
 
     console.log(cylinder);
 }
+
+
+
 // Check player states
 if (player2 === true) {
-
 
 
 
@@ -330,19 +418,16 @@ if (player2 === true) {
 
                 gamestate = 0;
                 endhide = 1
-                if (gamestate == 0) {
-    
-                
+            } else if (secondshot == 1) { // Check if secondshot is 1 before switching players
+                    nextturn()
+                    turnswitcher()
+                    secondshot = 0; // Reset secondshot after handling
                 }
-            } else {
+                else {
+                    shootfail();
+                }
 
 
-
-                if (secondshot == 1) {
-                    newText = "The gun did not go off. Player 1's turn"
-
-                } 
-                changeText(newText, "32px"); // Use the new changeText function
     
             console.log(cylinder);
         }
@@ -354,7 +439,7 @@ if (player2 === true) {
     
     function shoot_op() {
         if (gamestate == 1) {
-            gun.style.transform = 'scaleX(-1)';
+            gun.style.transform = 'scaleX(1)';
             cylinder += 1;
             if (cylinder > 6) {
                 cylinder = 1; // Reset cylinder if it exceeds 6
@@ -373,6 +458,7 @@ if (player2 === true) {
             
         } else {
             shoot_op_failed();
+            secondshot = 1; // Set secondshot to 1 to indicate Player 1's turn is over
         }
     
         console.log(cylinder);
@@ -380,5 +466,4 @@ if (player2 === true) {
     }
 
 
-}
 }
