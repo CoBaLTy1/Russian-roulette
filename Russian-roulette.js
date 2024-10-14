@@ -1,4 +1,3 @@
-
 const gun = document.querySelector('.gun');
 const spin_cylinder = document.querySelector('.button2');
 const shoot_opponent = document.querySelector('.button3');
@@ -9,7 +8,14 @@ let cylinder = 0;
 const playagain = document.querySelector('.play_again')
 
 
-gun.style.transform = 'rotate(270deg)';
+
+
+
+zoomInTop(gun);
+
+function turnleft() {
+    gun.style.transform = 'scaleX(-1)'
+}
 
 
 function nextturn() {
@@ -112,7 +118,7 @@ function gunwentoff() {
 }
 
 function triggertyping_begin() {
-    const begintext = "Gun loaded, pick a target player 1";
+    const begintext = "Gun loaded, player 1 pick a target";
     changeText(begintext, "35px");
 }
 
@@ -314,10 +320,9 @@ function resetgame() { // Move resetgame to global scope
 
     gun.style.transform = 'rotate(270deg)';
 
-    gun.classList.remove('zoomInTop')
-    void gun.offsetWidth;
 
-    gun.classList.add('zoomInTop')
+
+    zoomInTop(gun)
 
 }
 
@@ -332,7 +337,7 @@ if (player1 === true) {
 function shoot() {
     if (gamestate == 1) { // Only allow shooting if the game is active
         cylinder += 1;
-        gun.style.transform = 'scaleX(-1)';
+        turnleft()
         if (cylinder > 6) {
             cylinder = 1; // Reset cylinder if it exceeds 6
         }
@@ -462,8 +467,39 @@ if (player2 === true) {
         }
     
         console.log(cylinder);
-    
+
     }
 
 
 }
+
+function zoomInTop(element) {
+    let scale = 10;
+    let opacity = 0;
+    const duration = 1000; // Animation duration in milliseconds
+    const startTime = performance.now();
+
+    function animate(time) {
+        gun.style.marginTop = '10px'
+        gun.style.transform = 'rotate(270deg)';
+        const elapsed = time - startTime;
+        const progress = Math.min(elapsed / duration, 1); // Ensure progress does not exceed 1
+
+        // Update scale and opacity based on progress
+        scale = 10 - (9 * progress); // Scale from 10 to 1
+        opacity = progress; // Opacity from 0 to 1
+
+        // Apply the transformations
+        element.style.transform = `scale(${scale}) translateY(-50%) rotate(270deg)`; // Added rotation
+        element.style.opacity = opacity;
+
+        if (progress < 1) {
+            requestAnimationFrame(animate); // Continue the animation
+        }
+    }
+
+    requestAnimationFrame(animate); // Start the animation
+}
+
+// Example usag
+
