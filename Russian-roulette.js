@@ -8,6 +8,8 @@ let cylinder = 0;
 const playagain = document.querySelector('.play_again')
 
 
+let firstanimation = true
+gun.style.transform = 'rotate(270deg)';
 
 
 
@@ -50,7 +52,7 @@ function turnswitcher() {
         shoot_opponent.style.gridColumn = '3/6'
         shoot_opponent.style.gridRow = '12/14'
         spinque = true
-        gun.style.gridColumn = '11/14'
+
  
 
     }
@@ -337,7 +339,14 @@ if (player1 === true) {
 function shoot() {
     if (gamestate == 1) { // Only allow shooting if the game is active
         cylinder += 1;
-        turnleft()
+        if (firstanimation === true) {
+            rotateAndScale(gun, 500);
+            firstanimation = false
+        }
+        else if (firstanimation === false) {
+            smoothScaleX(gun, 500);
+        }
+
         if (cylinder > 6) {
             cylinder = 1; // Reset cylinder if it exceeds 6
         }
@@ -379,6 +388,13 @@ function shoot() {
 function shoot_op() {
     if (gamestate == 1) {
         cylinder += 1;
+        if (firstanimation === true) {
+            rotateElementTo270AndThen90(gun, 500)
+            firstanimation = false
+        }
+        else if (firstanimation === false) {
+            smoothScaleXToOne(gun, 500)
+        }
         if (cylinder > 6) {
             cylinder = 1; // Reset cylinder if it exceeds 6
         }
@@ -390,7 +406,6 @@ function shoot_op() {
         shoot_op_win();
 
     } else {
-        gun.style.transform = 'scaleX(1)'
         shoot_op_failed();
         secondshot = 1; // Set secondshot to 1 to indicate Player 1's turn is over
     }
@@ -444,7 +459,6 @@ if (player2 === true) {
     
     function shoot_op() {
         if (gamestate == 1) {
-            gun.style.transform = 'scaleX(1)';
             cylinder += 1;
             if (cylinder > 6) {
                 cylinder = 1; // Reset cylinder if it exceeds 6
@@ -476,11 +490,10 @@ if (player2 === true) {
 function zoomInTop(element) {
     let scale = 10;
     let opacity = 0;
-    const duration = 1000; // Animation duration in milliseconds
+    const duration = 500; // Animation duration in milliseconds
     const startTime = performance.now();
 
     function animate(time) {
-        gun.style.marginTop = '10px'
         gun.style.transform = 'rotate(270deg)';
         const elapsed = time - startTime;
         const progress = Math.min(elapsed / duration, 1); // Ensure progress does not exceed 1
@@ -501,5 +514,166 @@ function zoomInTop(element) {
     requestAnimationFrame(animate); // Start the animation
 }
 
+
+
+function rotateAndScale(element, duration) {
+    const startTime = performance.now(); // Get the current time
+    const initialRotation = 270; // Starting rotation in degrees
+    const targetRotation = 360; // Target rotation in degrees (which is equivalent to 0 degrees)
+    const initialScaleX = 1; // Starting scaleX
+    const targetScaleX = -1; // Target scaleX
+
+    // First part: Rotate to 360 degrees
+    function rotateToTarget(time) {
+        const elapsed = time - startTime; // Calculate elapsed time
+        const progress = Math.min(elapsed / (duration / 2), 1); // First half of the duration
+
+        // Interpolate the rotation and scale values
+        const currentRotation = initialRotation + (targetRotation - initialRotation) * progress;
+        const currentScaleX = initialScaleX; // Keep scaleX at 1 during rotation
+
+        // Apply the transformations
+        element.style.transform = `rotate(${currentRotation}deg) scaleX(${currentScaleX})`;
+
+        // Continue the animation if not yet complete
+        if (progress < 1) {
+            requestAnimationFrame(rotateToTarget);
+        } else {
+            // Once the rotation is complete, start scaling to scaleX(-1)
+            scaleToNegativeX(performance.now());
+        }
+        firstanimation = false;
+    }
+
+    // Second part: Scale to scaleX(-1)
+    function scaleToNegativeX(startScaleTime) {
+        const scaleStartTime = startScaleTime; // Get the current time for scaling
+        const scaleDuration = duration / 2; // Remaining duration for scaling
+
+        function scaleAnimation(time) {
+            const elapsed = time - scaleStartTime; // Calculate elapsed time
+            const progress = Math.min(elapsed / scaleDuration, 1); // Scale for the remaining duration
+
+            // Interpolate the scale value
+            const currentScaleX = initialScaleX + (targetScaleX - initialScaleX) * progress;
+
+            // Apply the scaling transformation
+            element.style.transform = `rotate(${targetRotation}deg) scaleX(${currentScaleX})`;
+
+            // Continue the scaling if not yet complete
+            if (progress < 1) {
+                requestAnimationFrame(scaleAnimation);
+            }
+        }
+
+        requestAnimationFrame(scaleAnimation); // Start the scaling animation
+    }
+
+    requestAnimationFrame(rotateToTarget); // Start the rotation animation
+
+    firstanimation = false;
+
+
+}
+
+// Example usage
+
+
+
+
 // Example usag
 
+// scaleAnimation.js
+
+function smoothScaleX(element, duration) {
+    const startTime = performance.now(); // Get the current time
+    const initialScaleX = 1; // Starting scaleX
+    const targetScaleX = -1; // Target scaleX
+
+    function animate(time) {
+        const elapsed = time - startTime; // Calculate elapsed time
+        const progress = Math.min(elapsed / duration, 1); // Calculate progress (0 to 1)
+
+        // Interpolate the scale value
+        const currentScaleX = initialScaleX + (targetScaleX - initialScaleX) * progress;
+
+        // Apply the scaling transformation
+        element.style.transform = `scaleX(${currentScaleX})`;
+
+        // Continue the animation if not yet complete
+        if (progress < 1) {
+            requestAnimationFrame(animate);
+        }
+    }
+
+    requestAnimationFrame(animate); // Start the animation
+    firstanimation = false
+}
+
+
+
+// Example usage
+
+function rotateElementTo270AndThen90(element, duration) {
+    // Set the transform origin to the center of the element
+
+    // Set the element to 270 degrees
+
+
+    // Use a timeout to ensure the first rotation is applied before starting the animation
+    setTimeout(() => {
+        const startTime = performance.now(); // Get the current time
+        const initialRotation = 270; // Starting rotation in degrees
+        const targetRotation = 360; // Target rotation in degrees (which is equivalent to 0 degrees)
+
+        function animate(time) {
+            const elapsed = time - startTime; // Calculate elapsed time
+            const progress = Math.min(elapsed / duration, 1); // Calculate progress (0 to 1)
+
+            // Interpolate the rotation value
+            const currentRotation = initialRotation + (targetRotation - initialRotation) * progress;
+
+            // Apply the rotation transformation
+            element.style.transform = `rotate(${currentRotation}deg)`;
+
+            // Continue the animation if not yet complete
+            if (progress < 1) {
+                requestAnimationFrame(animate);
+            }
+        }
+
+        requestAnimationFrame(animate); // Start the animation
+    }, 100); // Delay to ensure the initial rotation is applied
+    firstanimation = false
+}
+
+
+
+
+
+function smoothScaleXToOne(element, duration) {
+    const startTime = performance.now(); // Get the current time
+    const initialScaleX = -1; // Starting scaleX
+    const targetScaleX = 1; // Target scaleX
+
+    // Set the initial scale to scaleX(-1)
+    element.style.transform = `scaleX(${initialScaleX})`;
+
+    function animate(time) {
+        const elapsed = time - startTime; // Calculate elapsed time
+        const progress = Math.min(elapsed / duration, 1); // Calculate progress (0 to 1)
+
+        // Interpolate the scale value
+        const currentScaleX = initialScaleX + (targetScaleX - initialScaleX) * progress;
+
+        // Apply the scaling transformation
+        element.style.transform = `scaleX(${currentScaleX})`;
+
+        // Continue the animation if not yet complete
+        if (progress < 1) {
+            requestAnimationFrame(animate);
+        }
+    }
+
+    requestAnimationFrame(animate); // Start the animation
+}
