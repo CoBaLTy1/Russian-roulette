@@ -87,8 +87,16 @@ body {
     grid-column: 8/11;
     grid-row: 8/10;
     mix-blend-mode: multiply;
+    transition: tranform 0.5s ease;
 
 }
+
+.gun.shot {
+    transform: rotate(20deg);
+}
+
+
+
 
 .heading {
     grid-column: 9/13;
@@ -128,10 +136,7 @@ body {
 }
 
 
-.zoomInTop { animation-name: zoomInTop }
-@keyframes zoomInTop {
-    from {
-        transform: scale(10) translateY(-50%);
-        opacity: 0;
-    }
-}
+
+
+
+
