@@ -8,33 +8,79 @@ let cylinder = 0;
 const playagain = document.querySelector('.play_again')
 
 
-let firstanimation = true
+
 gun.style.transform = 'rotate(270deg)';
 
 
 
+let up = true
+let right = false
+let left = false
+
 zoomInTop(gun);
+
+
+
+
 
 function flipAnimation(target) {
     anime({
       targets: target,
       scaleX: [-1, 1],
-      duration: 1000,
+      duration: 500,
       easing: 'easeInOutQuad'
     });
-  }
+    right = false
+    up = false
+    left = true
+} 
+  function rotateElement(target) {
+    anime({
+        targets: target,
+        rotate: {
+            value: [270, 360], // Rotate from 90 to 360 degrees
+            duration: 500, // Duration of the animation in milliseconds
+            easing: 'easeInOutQuad' // Easing function
+        },
+        loop: false // Set to true if you want the animation to loop
+    });
+    right = true
+    up = false
+    left = false
+}
   
   function rotateAndFlipAnimation(target) {
     anime({
       targets: target,
       rotate: [270, 360],
       scaleX: [1, -1],
-      duration: 1000,
+      duration: 500,
       easing: 'easeInOutQuad',
       // Perform rotation first, then flip
       delay: anime.stagger(500)
     });
+    left = true
+    right = false
+    up = false
   }
+
+  function flipAnimationleft(target) {
+    anime({
+        targets: target,
+        scaleX: [1, -1], // Animate from scaleX(1) to scaleX(-1)
+        duration: 500, // Duration of the animation in milliseconds
+        easing: 'easeInOutQuad', // Easing function for smooth animation
+        complete: function() {
+            console.log('Flip animation completed!'); // Optional callback
+        }
+    });
+    left = true
+    right = false
+    up = false
+}
+
+
+
 
 function nextturn() {
     if (player1 === true) {
@@ -322,6 +368,7 @@ function resetgame() { // Move resetgame to global scope
     gamestate = 1;
     console.log("Game has been reset");
     endhide = 0;
+    secondshot = 0
     // Optionally, you can also reset other variables if needed
     cylinder = 0; // Reset cylinder
     cylinder_bullet = Math.floor(Math.random() * 6) + 1;
@@ -337,6 +384,9 @@ function resetgame() { // Move resetgame to global scope
     gun.style.gridColumn = '8/11';
 
     gun.style.transform = 'rotate(270deg)';
+    up = true
+    left = false
+    right = false
 
 
 
@@ -355,10 +405,13 @@ if (player1 === true) {
 function shoot() {
     if (gamestate == 1) { // Only allow shooting if the game is active
         cylinder += 1;
-        if (firstanimation === true) {
+
+        if (up === true) {
             rotateAndFlipAnimation(gun)
         }
-
+        else if (right === true) {
+            flipAnimation(gun)
+        }
         if (cylinder > 6) {
             cylinder = 1; // Reset cylinder if it exceeds 6
         }
@@ -369,6 +422,9 @@ function shoot() {
             gamestate = 0;
             endhide = 1;
         } else if (secondshot == 1) { // Check if secondshot is 1 before switching players
+            if (right === true) {
+                flipAnimationleft(gun)
+            }
                 nextturn()
                 turnswitcher()
 
@@ -395,12 +451,21 @@ function shoot() {
 
 }
 
+
 // Call the function to handle the next player's turn
 
 function shoot_op() {
     if (gamestate == 1) {
         cylinder += 1;
+        if (up === true) {
+            rotateElement(gun)
+        }
+        else if (left === true) {
+            flipAnimation(gun)
+        }
+        else if (right === true) {
 
+        }
         if (cylinder > 6) {
             cylinder = 1; // Reset cylinder if it exceeds 6
         }
@@ -440,6 +505,9 @@ if (player2 === true) {
             shoot_opponent.style.display = 'block';
     
             if (cylinder == cylinder_bullet) {
+                if (secondshot == 1) {
+                    turnswitcher()
+                }
                 gunwentoff();
 
                 gamestate = 0;
@@ -477,7 +545,7 @@ if (player2 === true) {
             gamestate = 0;
             endhide = 1;
             shoot_op_win()
-
+            secondshot = 1
     
             playagain.style.display = 'block'
             
@@ -519,9 +587,5 @@ function zoomInTop(element) {
 
     requestAnimationFrame(animate); // Start the animation
 }
-
-
-
-
 
 
