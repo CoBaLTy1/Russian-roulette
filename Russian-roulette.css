@@ -82,10 +82,11 @@ body {
 
 
 .gun {
-    height: 60%;
-    width: 60%;
-    grid-column: 8/11;
-    grid-row: 8/10;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    height: 9%;
+    width: 9%;
     mix-blend-mode: multiply;
     margin-top: 30px;
     margin-left: 15px;
@@ -130,4 +131,11 @@ body {
     grid-row: 16/18;
     grid-column: 9/12;
     display: none;
+}
+
+.endturner {
+    grid-column: 3/6;
+    grid-row: 16/18;
+    background-color: yellow;
+    font-size: 30px;
 }
