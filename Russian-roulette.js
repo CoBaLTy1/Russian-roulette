@@ -6,6 +6,7 @@ let gamestate = 1;
 let display = document.querySelector('.center_display');
 let cylinder = 0;
 const playagain = document.querySelector('.play_again')
+const endturner = document.querySelector('.endturner')
 
 
 
@@ -23,72 +24,32 @@ zoomInTop(gun);
 
 
 
-function flipAnimation(target) {
-    anime({
-      targets: target,
-      scaleX: [-1, 1],
-      duration: 500,
-      easing: 'easeInOutQuad'
-    });
-    right = false
-    up = false
-    left = true
-} 
-  function rotateElement(target) {
-    anime({
-        targets: target,
-        rotate: {
-            value: [270, 360], // Rotate from 90 to 360 degrees
-            duration: 500, // Duration of the animation in milliseconds
-            easing: 'easeInOutQuad' // Easing function
-        },
-        loop: false // Set to true if you want the animation to loop
-    });
-    right = true
-    up = false
-    left = false
-}
-  
-  function rotateAndFlipAnimation(target) {
-    anime({
-      targets: target,
-      rotate: [270, 360],
-      scaleX: [1, -1],
-      duration: 500,
-      easing: 'easeInOutQuad',
-      // Perform rotation first, then flip
-      delay: anime.stagger(500)
-    });
-    left = true
-    right = false
-    up = false
-  }
 
-  function flipAnimationleft(target) {
-    anime({
-        targets: target,
-        scaleX: [1, -1], // Animate from scaleX(1) to scaleX(-1)
-        duration: 500, // Duration of the animation in milliseconds
-        easing: 'easeInOutQuad', // Easing function for smooth animation
-        complete: function() {
-            console.log('Flip animation completed!'); // Optional callback
-        }
-    });
-    left = true
-    right = false
-    up = false
+function endturn() {
+    turnended()
+    turnswitcher()
 }
 
 
 
+function turnended() {
+    if (player1 === true) {
+    const turnended_text = "player 1 decided to end their turn"
+    changeText(turnended_text, "30px");
+    }
+    else if (player2 === true) {
+    const turnended_text = "player 2 decided to end their turn"
+    changeText(turnended_text, "30px");
+    }
+}
 
 function nextturn() {
     if (player1 === true) {
-        const nextturn_text = "The gun did not go off player 2's turn"
+        const nextturn_text = "The gun did not go off"
         changeText(nextturn_text, "30px");
     }
     else if (player2 === true) {
-        const nextturn_text = "The gun did not go off player 1's turn"
+        const nextturn_text = "The gun did not go off"
         changeText(nextturn_text, "30px");
     }
 }
@@ -103,6 +64,23 @@ function shootfail() {
     }
 }
 
+
+function moveElementAnime() {
+    anime({
+        targets: gun,
+        translateX: 300
+      });
+}
+
+
+function moveElementAnime1() {
+    anime({
+        targets: gun,
+        translateY: 300
+      });
+}
+
+
 let spinque = false 
 function turnswitcher() {
     if (player1 === true) {
@@ -114,6 +92,15 @@ function turnswitcher() {
         shoot_opponent.style.gridColumn = '3/6'
         shoot_opponent.style.gridRow = '12/14'
         spinque = true
+        endturner.style.gridColumn = '15/18'
+        if (up === true) {
+        moveElementAnime1()
+        }
+        else if (up === false) {
+            moveElementAnime()
+        }
+        
+
 
  
 
@@ -128,6 +115,7 @@ function turnswitcher() {
         shoot_opponent.style.gridRow = '12/14'
         spinque = true
         gun.style.gridColumn = '8/11'
+        endturner.style.gridColumn = '3/6'
 
 
     }
@@ -154,6 +142,7 @@ function spin_the_cylinder() {
     spin_cylinder.style.display = 'none';
     shoot_opponent.style.display = 'none';
     yourself.style.display = 'none';
+    endturner.style.display = 'none';
 }
 
 
@@ -203,6 +192,7 @@ function showbuttons() {
     spin_cylinder.style.display = 'block';
     shoot_opponent.style.display = 'block';
     yourself.style.display = 'block';
+    endturner.style.display = 'block';
 }
 
 function showbuttons1() {
@@ -399,43 +389,106 @@ let secondshot = 0
 
 
 
+function flipAnimation(target) {
+    anime({
+      targets: target,
+      scaleX: [-1, 1],
+      duration: 500,
+      easing: 'easeInOutQuad'
+    });
+
+} 
+  function rotateElement(target) {
+    anime({
+        targets: target,
+        rotate: {
+            value: [270, 360], // Rotate from 90 to 360 degrees
+            duration: 500, // Duration of the animation in milliseconds
+            easing: 'easeInOutQuad' // Easing function
+        },
+        loop: false // Set to true if you want the animation to loop
+    });
+
+}
+  
+  function rotateAndFlipAnimation(target) {
+    anime({
+      targets: target,
+      rotate: [270, 360],
+      scaleX: [1, -1],
+      duration: 500,
+      easing: 'easeInOutQuad',
+      // Perform rotation first, then flip
+    });
+
+  }
+
+  function flipAnimationleft(target) {
+    // First, instantly reset the scale to 1
+    anime.set(target, {
+        scaleX: 1
+    });
+    // Then animate to -1
+    anime({
+        targets: target,
+        scaleX: -1,
+        duration: 500,
+        easing: 'easeInOutQuad'
+    });
+}
+
+
+
+
+
 
 if (player1 === true) {
 
 function shoot() {
     if (gamestate == 1) { // Only allow shooting if the game is active
         cylinder += 1;
+        if (secondshot === 0) {
 
         if (up === true) {
             rotateAndFlipAnimation(gun)
+            left = true
+            right = false
+            up = false
         }
         else if (right === true) {
-            flipAnimation(gun)
+            flipAnimationleft(gun)  // Changed this line
+            left = true
+            right = false
+            up = false
         }
         if (cylinder > 6) {
             cylinder = 1; // Reset cylinder if it exceeds 6
         }
 
 
+    }
+
         if (cylinder == cylinder_bullet) {
             gunwentoff();
+            flipAnimationleft(gun)  // Changed this line
+            left = true
+            right = false
+            up = false
             gamestate = 0;
             endhide = 1;
         } else if (secondshot == 1) { // Check if secondshot is 1 before switching players
             if (right === true) {
                 flipAnimationleft(gun)
+                left = true
+                right = false
+                up = false
             }
                 nextturn()
-                turnswitcher()
-
-               
-
-
-
                 secondshot = 0;
+                moveElementAnime()
+
         }
 
-            
             else {
                 shootfail();
 
@@ -459,12 +512,15 @@ function shoot_op() {
         cylinder += 1;
         if (up === true) {
             rotateElement(gun)
+            right = true
+            up = false
+            left = false
         }
         else if (left === true) {
             flipAnimation(gun)
-        }
-        else if (right === true) {
-
+            right = true
+            up = false
+            left = false
         }
         if (cylinder > 6) {
             cylinder = 1; // Reset cylinder if it exceeds 6
@@ -506,7 +562,6 @@ if (player2 === true) {
     
             if (cylinder == cylinder_bullet) {
                 if (secondshot == 1) {
-                    turnswitcher()
                 }
                 gunwentoff();
 
@@ -514,7 +569,6 @@ if (player2 === true) {
                 endhide = 1
             } else if (secondshot == 1) { // Check if secondshot is 1 before switching players
                     nextturn()
-                    turnswitcher()
                     secondshot = 0; // Reset secondshot after handling
                 }
                 else {
@@ -587,5 +641,3 @@ function zoomInTop(element) {
 
     requestAnimationFrame(animate); // Start the animation
 }
-
-
