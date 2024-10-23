@@ -15,7 +15,7 @@ endturner.style.display = 'none'
 
 
 let jobsdone = false;
-
+let turnendedchanges = false
 let up = true
 let right = false
 let left = false
@@ -28,9 +28,11 @@ function endturn() {
     endturner.style.display = 'none'
     turnendedtext()
     turnswitcher()
+    moveElement(gun)
 }
 
 function turnendedtext() {
+    turnendedchanges = true
     if (player1 === true) {
     const turnended_text = "Player 1 ended their turn, player 2's turn"
     changeText(turnended_text)
@@ -40,6 +42,8 @@ function turnendedtext() {
     const turnended_text = "Player 2 ended their turn player 1's turn"
     changeText(turnended_text)
     }
+
+
 }
 
 
@@ -49,12 +53,13 @@ function turnendedtext() {
 
 
 function nextturn() {
+    jobsdone = true
     if (player1 === true) {
-        const nextturn_text = "The gun did not go off player 2's turn"
+        const nextturn_text = "The gun did not go off"
         changeText(nextturn_text, "30px");
     }
     else if (player2 === true) {
-        const nextturn_text = "The gun did not go off player 1's turn"
+        const nextturn_text = "The gun did not go off"
         changeText(nextturn_text, "30px");
     }
 }
@@ -83,6 +88,7 @@ function turnswitcher() {
         shoot_opponent.style.gridColumn = '3/6'
         shoot_opponent.style.gridRow = '12/14'
         spinque = true
+        spin_cylinderdone = false
 
  
 
@@ -100,6 +106,7 @@ function turnswitcher() {
         shoot_opponent.style.gridRow = '12/14'
         spinque = true
         gun.style.gridColumn = '8/11'
+        spincylinderdone = false
 
 
 
@@ -127,6 +134,7 @@ function spin_the_cylinder() {
     spin_cylinder.style.display = 'none';
     shoot_opponent.style.display = 'none';
     yourself.style.display = 'none';
+    endturner.style.display = 'none';
 }
 
 
@@ -188,8 +196,9 @@ function showbutton1() {
 }
 
 function showbuttonsspin() {
-    yourself.style.display = 'block'
-    shoot_opponent.style.display = 'block'
+    shoot_opponent.style.display = 'block';
+    spin_cylinder.style.display = 'none';
+    yourself.style.display = 'block';
 }
 
 
@@ -225,6 +234,11 @@ function changeTextWithTypingEffect(newText,) {
             clearInterval(typingInterval); // Stop the typing effect
 
                 // ...
+
+                if (turnendedchanges === true){
+                    showbuttons(); // Show buttons
+                    endturner.style.display = 'none';
+                }
 
                 if (jobsdone === true) {
                     hidebuttons(); // Hide buttons
@@ -411,13 +425,29 @@ function flipAnimation(target) {
 
   }
   function flipAnimationleft(target) {
+    // First, instantly reset the scale to 1
+    anime.set(target, {
+        scaleX: 1
+    });
+    // Then animate to -1
     anime({
         targets: target,
-        scaleX: [1, -1],
+        scaleX: -1,
         duration: 500,
         easing: 'easeInOutQuad'
     });
 }
+
+function moveElement(element) {
+    anime({
+        targets: element, // Use the passed element instead of gun
+        translateX: -340,
+        duration: 500, // Optional: specify duration for the animation
+        easing: 'easeInOutQuad' // Optional: specify easing function
+    });
+}
+
+
 
 if (player1 === true) {
 
@@ -462,6 +492,7 @@ if (player1 === true) {
                     right = false
                     up = false
                 }
+                    jobsdone = true
                     nextturn()
                     secondshot = 0;
             }
@@ -488,12 +519,15 @@ function shoot_op() {
         cylinder += 1;
         if (up === true) {
             rotateElement(gun)
+            right = true
+            up = false
+            left = false
         }
         else if (left === true) {
             flipAnimation(gun)
-        }
-        else if (right === true) {
-
+            right = true
+            left = false
+            up = false
         }
         if (cylinder > 6) {
             cylinder = 1; // Reset cylinder if it exceeds 6
@@ -613,3 +647,13 @@ function zoomInTop(element) {
 
     requestAnimationFrame(animate); // Start the animation
 }
+
+// Function to move the element
+
+
+// Call the function to move the element
+
+
+
+
+
