@@ -25,10 +25,21 @@ zoomInTop(gun);
 
 
 function endturn() {
+    if (player1 === true) {
+    endturner.style.display = 'none'
+    turnendedtext()
+    zoomOutTop(gun)
+    zoomInTop(gun1)
+    turnswitcher()
+
+    }
+
+    else if (player2 === true) {
     endturner.style.display = 'none'
     turnendedtext()
     turnswitcher()
-    moveElement(gun)
+    
+    }
 }
 
 function turnendedtext() {
@@ -438,14 +449,7 @@ function flipAnimation(target) {
     });
 }
 
-function moveElement(element) {
-    anime({
-        targets: element, // Use the passed element instead of gun
-        translateX: -340,
-        duration: 500, // Optional: specify duration for the animation
-        easing: 'easeInOutQuad' // Optional: specify easing function
-    });
-}
+
 
 
 
@@ -621,39 +625,53 @@ if (player2 === true) {
 
 }
 
-function zoomInTop(element) {
-    let scale = 10;
-    let opacity = 0;
-    const duration = 500; // Animation duration in milliseconds
-    const startTime = performance.now();
 
-    function animate(time) {
-        gun.style.transform = 'rotate(270deg)';
-        const elapsed = time - startTime;
-        const progress = Math.min(elapsed / duration, 1); // Ensure progress does not exceed 1
-
-        // Update scale and opacity based on progress
-        scale = 10 - (9 * progress); // Scale from 10 to 1
-        opacity = progress; // Opacity from 0 to 1
-
-        // Apply the transformations
-        element.style.transform = `scale(${scale}) translateY(-50%) rotate(270deg)`; // Added rotation
-        element.style.opacity = opacity;
-
-        if (progress < 1) {
-            requestAnimationFrame(animate); // Continue the animation
-        }
-    }
-
-    requestAnimationFrame(animate); // Start the animation
+function zoomInTop(element) { // Renamed function for clarity
+    anime({
+        targets: element,
+        scale: [10, 1], // Scale from 10 to 1
+        rotate: 270, // Keep the same rotation
+        opacity: [0, 1], // Opacity from 0 to 1
+        duration: 500, // Duration of the animation
+        easing: 'easeInOutQuad', // Easing function
+    });
 }
 
+
+
+function zoomOutTop(element) { // Renamed function for clarity
+    if (player1 === true) {
+        anime({
+            targets: element,
+            scale: [1, 10], // Scale from 1 to 10
+            opacity: [1, 0], // Opacity from 1 to 0
+            duration: 500, // Duration of the animation
+            easing: 'easeInOutQuad', // Easing function
+            complete: function() {
+                gun.style.display = 'none';
+                gun1.style.display = 'block';
+            } // Callback function to hide the gun after the animation
+        });
+
+    }
+
+    else if (player2 === true) {
+
+    anime({
+        targets: element,
+        scale: [1, 10], // Scale from 1 to 10
+        opacity: [1, 0], // Opacity from 1 to 0
+        duration: 500, // Duration of the animation
+        easing: 'easeInOutQuad', // Easing function
+        complete: function() {
+            gun1.style.display = 'none';
+            gun.style.display = 'block';
+        } // Callback function to hide the gun after the animation
+    });
+    }
+
+}
 // Function to move the element
 
 
 // Call the function to move the element
-
-
-
-
-
